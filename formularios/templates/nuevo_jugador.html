@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Nuevo jugador</h1>
+<form method="post">
+  <label>Nombre <input name="nombre" required></label>
+  <label>Apellidos <input name="apellidos" required></label>
+  <label>Fecha de nacimiento <input type="date" name="fecha_nacimiento"></label>
+  <label>Nacionalidad <input name="nacionalidad"></label>
+  <label>Posición
+    <select name="posicion_id">
+      <option value="">-- Selecciona --</option>
+      {% for p in posiciones %}<option value="{{ p['id'] }}">{{ p['nombre'] }}</option>{% endfor %}
+    </select>
+  </label>
+  <label>Altura (cm) <input type="number" name="altura_cm"></label>
+  <label>Peso (kg) <input type="number" name="peso_kg"></label>
+  <label>Mano dominante
+    <select name="mano_dominante_id">
+      <option value="">-- Selecciona --</option>
+      {% for m in manos %}<option value="{{ m['id'] }}">{{ m['nombre'] }}</option>{% endfor %}
+    </select>
+  </label>
+  <label>Estado actual
+    <select name="estado_actual_id">
+      {% for e in estados %}<option value="{{ e['id'] }}">{{ e['nombre'] }}</option>{% endfor %}
+    </select>
+  </label>
+  <button type="submit">Guardar</button>
+</form>
+{% endblock %}

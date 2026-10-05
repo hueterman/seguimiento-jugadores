@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Buscar texto libre</h1>
+<p>Busca una o varias palabras a la vez en lesiones (tipo, zona, diagnóstico, tratamiento, notas), datos económicos (agente, notas), trayectoria (rol), hitos de carrera y agente representante — sin falta de acentos. Ej: "rodilla", "agente Fulano", "MVP".</p>
+
+{% if not disponible %}
+<p><strong>La búsqueda de texto libre todavía no está activada.</strong> Hay que ejecutar una vez, desde la carpeta del proyecto:</p>
+<pre>python -m database.migrar_fts_busqueda_v7</pre>
+{% else %}
+
+<form method="get" action="{{ url_for('routes.buscar_texto') }}">
+  <label>Texto a buscar
+    <input type="text" name="q" value="{{ texto }}" placeholder="ej. rodilla, agente, MVP...">
+  </label>
+  <button type="submit">Buscar</button>
+</form>
+
+{% if texto and resultados %}
+<table>
+  <tr><th>Jugador</th><th>Dónde coincide</th><th>Fragmento</th></tr>
+  {% for r in resultados %}
+  <tr>
+    <td><a href="{{ url_for('routes.detalle_jugador', jugador_id=r['jugador_id']) }}">{{ r['nombre'] }} {{ r['apellidos'] }}</a></td>
+    <td>{{ r['etiqueta_tabla'] }}{% if r['contexto'] %} — {{ r['contexto'] }}{% endif %}</td>
+    <td>{{ r['fragmento'] }}</td>
+  </tr>
+  {% endfor %}
+</table>
+<p>{{ resultados|length }} resultado(s) (máximo 100).</p>
+{% elif texto %}
+<p>No se ha encontrado nada con "{{ texto }}".</p>
+{% endif %}
+
+{% endif %}
+{% endblock %}

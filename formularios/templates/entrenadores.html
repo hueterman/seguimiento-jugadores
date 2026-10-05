@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Entrenadores</h1>
+{% if entrenadores %}
+<table>
+  <tr><th>Equipo</th><th>Nombre</th><th>Cargo</th><th>Temporada</th></tr>
+  {% for e in entrenadores %}
+  <tr>
+    <td>{{ e["equipo"] or "-" }}</td>
+    <td>{{ e["nombre"] }} {{ e["apellidos"] }}</td>
+    <td>{{ e["cargo"] or "-" }}</td>
+    <td>{{ e["temporada"] or "-" }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+<p>Todavía no hay entrenadores registrados. Se dan de alta por CSV con
+  <code>python -m scraping.alta_entrenadores &lt;ruta_csv&gt;</code>
+  (ver <code>scraping/README.md</code>).</p>
+{% endif %}
+{% endblock %}

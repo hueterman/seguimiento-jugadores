@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="ficha-cabecera">
+  {% if jugador["foto_url"] %}
+  <img src="{{ jugador['foto_url'] }}" alt="Foto de {{ jugador['nombre'] }} {{ jugador['apellidos'] }}" class="ficha-foto">
+  {% endif %}
+  <h1>{{ jugador["nombre"] }} {{ jugador["apellidos"] }}</h1>
+</div>
+<table>
+  <tr><th>Posición</th><td>{{ jugador["posicion"] or "-" }}</td></tr>
+  <tr><th>Estado</th><td>{{ jugador["estado"] or "-" }}</td></tr>
+  <tr><th>Nacionalidad</th><td>{{ jugador["nacionalidad"] or "-" }}</td></tr>
+  <tr><th>Altura</th><td>{% if jugador["altura_cm"] %}{{ jugador["altura_cm"] }} cm{% else %}-{% endif %}</td></tr>
+  <tr><th>Peso</th><td>{% if jugador["peso_kg"] %}{{ jugador["peso_kg"] }} kg{% else %}-{% endif %}</td></tr>
+  <tr><th>Fecha de nacimiento</th><td>{{ jugador["fecha_nacimiento"] or "-" }}</td></tr>
+</table>
+<p>
+  <a href="{{ url_for('routes.editar_jugador', jugador_id=jugador['id']) }}">Editar jugador</a> ·
+  <a href="{{ url_for('routes.nueva_lesion', jugador_id=jugador['id']) }}">+ Añadir lesión</a> ·
+  <a href="{{ url_for('routes.nuevo_dato_economico', jugador_id=jugador['id']) }}">+ Añadir dato económico</a>
+</p>
+
+<h2>Trayectoria</h2>
+{% if trayectoria %}
+<table>
+  <tr><th>Temporada</th><th>Equipo</th><th>Movimiento</th><th>Dorsal</th></tr>
+  {% for t in trayectoria %}
+  <tr>
+    <td>{{ t["temporada"] }}</td>
+    <td>{{ t["equipo"] }}</td>
+    <td>{{ t["tipo_movimiento"] or "-" }}</td>
+    <td>{{ t["dorsal"] or "-" }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+<p>Sin trayectoria registrada.</p>
+{% endif %}
+
+<h2>Estadísticas por temporada</h2>
+{% if estadisticas %}
+<table>
+  <tr>
+    <th>Temporada</th><th>Equipo</th><th>PJ</th><th>Titular</th>
+    <th>Puntos</th><th>Máx</th>
+    <th>T2 (C/I, %)</th><th>T3 (C/I, %)</th><th>TL (C/I, %)</th>
+    <th>Rebotes (Ofe/Def)</th><th>Asist.</th>
+    <th>Robos</th><th>Tapones</th><th>Pérdidas</th><th>Faltas</th>
+    <th>+/-</th><th>Val.</th><th>V-D</th>
+  </tr>
+  {% for e in estadisticas %}
+  <tr>
+    <td>{{ e["temporada"] }}</td>
+    <td>{{ e["equipo"] or "-" }}</td>
+    <td>{{ e["partidos_jugados"] or "-" }}</td>
+    <td>{{ e["partidos_titular"] if e["partidos_titular"] is not none else "-" }}</td>
+    <td>{{ e["puntos_promedio"] or "-" }}</td>
+    <td>{{ e["puntos_max"] if e["puntos_max"] is not none else "-" }}</td>
+    <td>{{ e["t2_convertidos"] if e["t2_convertidos"] is not none else "-" }}/{{ e["t2_intentados"] if e["t2_intentados"] is not none else "-" }} ({{ e["porcentaje_tiro2"] or "-" }}%)</td>
+    <td>{{ e["t3_convertidos"] if e["t3_convertidos"] is not none else "-" }}/{{ e["t3_intentados"] if e["t3_intentados"] is not none else "-" }} ({{ e["porcentaje_tiro3"] or "-" }}%)</td>
+    <td>{{ e["tl_convertidos"] if e["tl_convertidos"] is not none else "-" }}/{{ e["tl_intentados"] if e["tl_intentados"] is not none else "-" }} ({{ e["porcentaje_tiro_libre"] or "-" }}%)</td>
+    <td>{{ e["rebotes_promedio"] or "-" }} ({{ e["rebotes_ofensivos_totales"] if e["rebotes_ofensivos_totales"] is not none else "-" }}/{{ e["rebotes_defensivos_totales"] if e["rebotes_defensivos_totales"] is not none else "-" }})</td>
+    <td>{{ e["asistencias_promedio"] or "-" }}</td>
+    <td>{{ e["robos_totales"] if e["robos_totales"] is not none else "-" }}</td>
+    <td>{{ e["tapones_totales"] if e["tapones_totales"] is not none else "-" }}</td>
+    <td>{{ e["perdidas_totales"] if e["perdidas_totales"] is not none else "-" }}</td>
+    <td>{{ e["faltas_totales"] if e["faltas_totales"] is not none else "-" }}</td>
+    <td>{{ e["mas_menos_promedio"] if e["mas_menos_promedio"] is not none else "-" }}</td>
+    <td>{{ e["valoracion_pir"] or "-" }}</td>
+    <td>{{ e["victorias"] if e["victorias"] is not none else "-" }}-{{ e["derrotas"] if e["derrotas"] is not none else "-" }}</td>
+  </tr>
+  {% endfor %}
+</table>
+<p><small>Los totales de rebotes ofe/def, tapones recibidos, mates, faltas recibidas y "5i" (titular) son estimaciones a partir del promedio por partido publicado en acb.com, no el dato exacto de la fuente.</small></p>
+{% else %}
+<p>Sin estadísticas registradas.</p>
+{% endif %}
+
+<h2>Totales de carrera</h2>
+{% if carrera %}
+<table>
+  <tr>
+    <th>Competición</th><th></th><th>PJ</th><th>Titular</th>
+    <th>Puntos</th><th>Máx</th>
+    <th>T2 (C/I, %)</th><th>T3 (C/I, %)</th><th>TL (C/I, %)</th>
+    <th>Rebotes (Ofe/Def)</th><th>Asist.</th>
+    <th>Robos</th><th>Tapones (F/C)</th><th>Mates</th><th>Pérdidas</th><th>Faltas (C/R)</th>
+    <th>+/-</th><th>Val.</th><th>V-D</th>
+  </tr>
+  {% for c in carrera %}
+  <tr>
+    <td>{{ c["competicion"] or "-" }}</td>
+    <td><strong>{{ c["tipo_fila"] }}</strong></td>
+    <td>{{ c["partidos_jugados"] | num }}</td>
+    <td>{{ c["partidos_titular"] | num }}</td>
+    <td>{{ c["puntos"] | num }}</td>
+    <td>{{ c["puntos_max"] | num }}</td>
+    <td>{{ c["t2_convertidos"] | num }}/{{ c["t2_intentados"] | num }} ({{ c["porcentaje_tiro2"] | num }}%)</td>
+    <td>{{ c["t3_convertidos"] | num }}/{{ c["t3_intentados"] | num }} ({{ c["porcentaje_tiro3"] | num }}%)</td>
+    <td>{{ c["tl_convertidos"] | num }}/{{ c["tl_intentados"] | num }} ({{ c["porcentaje_tiro_libre"] | num }}%)</td>
+    <td>{{ c["rebotes"] | num }} ({{ c["rebotes_ofensivos"] | num }}/{{ c["rebotes_defensivos"] | num }})</td>
+    <td>{{ c["asistencias"] | num }}</td>
+    <td>{{ c["robos"] | num }}</td>
+    <td>{{ c["tapones_favor"] | num }}/{{ c["tapones_contra"] | num }}</td>
+    <td>{{ c["mates"] | num }}</td>
+    <td>{{ c["perdidas"] | num }}</td>
+    <td>{{ c["faltas_cometidas"] | num }}/{{ c["faltas_recibidas"] | num }}</td>
+    <td>{{ c["mas_menos"] | num }}</td>
+    <td>{{ c["valoracion_pir"] | num }}</td>
+    <td>{{ c["victorias"] | num }}-{{ c["derrotas"] | num }}</td>
+  </tr>
+  {% endfor %}
+</table>
+<p><small>"Totales" y "Promedios" son los valores reales publicados por acb.com (no estimaciones nuestras): sumas de toda la carrera en esa competición y promedio real por partido, respectivamente.</small></p>
+{% else %}
+<p>Sin totales de carrera registrados.</p>
+{% endif %}
+
+<h2>Diario de lesiones</h2>
+{% if lesiones %}
+<table>
+  <tr><th>Inicio</th><th>Fin</th><th>Tipo</th><th>Zona</th><th>Gravedad</th><th>Estado</th></tr>
+  {% for l in lesiones %}
+  <tr>
+    <td>{{ l["fecha_inicio"] }}</td>
+    <td>{{ l["fecha_fin_real"] or l["fecha_fin_estimada"] or "-" }}</td>
+    <td>{{ l["tipo_lesion"] or "-" }}</td>
+    <td>{{ l["zona_corporal"] or "-" }}</td>
+    <td>{{ l["gravedad"] or "-" }}</td>
+    <td>{{ l["estado"] or "-" }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+<p>Sin lesiones registradas.</p>
+{% endif %}
+
+<h2>Datos económicos</h2>
+{% if economicos %}
+<table>
+  <tr><th>Temporada</th><th>Equipo</th><th>Contrato</th><th>Salario</th><th>Fiabilidad</th></tr>
+  {% for d in economicos %}
+  <tr>
+    <td>{{ d["temporada"] }}</td>
+    <td>{{ d["equipo"] or "-" }}</td>
+    <td>{{ d["tipo_contrato"] or "-" }}</td>
+    <td>{% if d["salario_estimado"] %}{{ d["salario_estimado"] }} {{ d["moneda"] }}{% else %}-{% endif %}</td>
+    <td>{{ d["fiabilidad"] or "-" }}</td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+<p>Sin datos económicos registrados.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Nuevo equipo</h1>
+<form method="post">
+  <label>Nombre <input name="nombre" required></label>
+  <label>País <input name="pais"></label>
+  <label>Ciudad <input name="ciudad"></label>
+  <label>Competición <input name="competicion"></label>
+  <label>Nivel <input name="nivel"></label>
+  <button type="submit">Guardar</button>
+</form>
+{% endblock %}

@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block body_class %}ancho{% endblock %}
+{% block content %}
+<h1>Buscar por estadísticas</h1>
+<p>Filtra temporadas de jugador por rango de cualquier métrica. Deja en blanco el mínimo o el máximo que no quieras limitar — todos los filtros rellenos se combinan con Y.</p>
+
+<form method="get" action="{{ url_for('routes.buscar_estadisticas') }}">
+  <label>Temporada
+    <select name="temporada">
+      <option value="">Todas</option>
+      {% for t in temporadas %}
+      <option value="{{ t }}" {% if filtros['temporada'] == t %}selected{% endif %}>{{ t }}</option>
+      {% endfor %}
+    </select>
+  </label>
+
+  <label>Competición
+    <select name="competicion">
+      <option value="">Todas</option>
+      {% for c in competiciones %}
+      <option value="{{ c }}" {% if filtros['competicion'] == c %}selected{% endif %}>{{ c }}</option>
+      {% endfor %}
+    </select>
+  </label>
+
+  <label>Ordenar por
+    <select name="orden">
+      {% for clave, etiqueta in metricas %}
+      <option value="{{ clave }}" {% if filtros['orden'] == clave %}selected{% endif %}>{{ etiqueta }}</option>
+      {% endfor %}
+    </select>
+  </label>
+
+  <h2>Rangos de estadísticas (por temporada)</h2>
+  {% for clave, etiqueta in metricas %}
+  <label>{{ etiqueta }} — mínimo
+    <input type="number" step="any" name="{{ clave }}_min" value="{{ filtros_rango[clave][0] if filtros_rango[clave][0] is not none else '' }}">
+  </label>
+  <label>{{ etiqueta }} — máximo
+    <input type="number" step="any" name="{{ clave }}_max" value="{{ filtros_rango[clave][1] if filtros_rango[clave][1] is not none else '' }}">
+  </label>
+  {% endfor %}
+
+  <button type="submit">Buscar</button>
+  <a href="{{ url_for('routes.buscar_estadisticas') }}">Limpiar filtros</a>
+</form>
+
+{% if resultados %}
+<div class="tabla-scroll">
+<table>
+  <tr>
+    <th>Jugador</th><th>Pos.</th><th>Temporada</th><th>Comp.</th><th>Equipo</th>
+    <th>PJ</th><th>Min</th><th>Pts</th><th>PtsMax</th><th>Reb</th><th>Ast</th>
+    <th>Rob</th><th>Tap</th><th>Pérd</th><th>%T2</th><th>%T3</th><th>%TL</th><th>+/-</th><th>PIR</th>
+  </tr>
+  {% for r in resultados %}
+  <tr>
+    <td><a href="{{ url_for('routes.detalle_jugador', jugador_id=r['jugador_id']) }}">{{ r['nombre'] }} {{ r['apellidos'] }}</a></td>
+    <td>{{ r['posicion'] or '-' }}</td>
+    <td>{{ r['temporada'] }}</td>
+    <td>{{ r['competicion'] or '-' }}</td>
+    <td>{{ r['equipo'] or '-' }}</td>
+    <td>{{ r['partidos_jugados']|num }}</td>
+    <td>{{ r['minutos_promedio']|num }}</td>
+    <td>{{ r['puntos_promedio']|num }}</td>
+    <td>{{ r['puntos_max']|num }}</td>
+    <td>{{ r['rebotes_promedio']|num }}</td>
+    <td>{{ r['asistencias_promedio']|num }}</td>
+    <td>{{ r['robos_totales']|num }}</td>
+    <td>{{ r['tapones_totales']|num }}</td>
+    <td>{{ r['perdidas_totales']|num }}</td>
+    <td>{{ r['porcentaje_tiro2']|num }}</td>
+    <td>{{ r['porcentaje_tiro3']|num }}</td>
+    <td>{{ r['porcentaje_tiro_libre']|num }}</td>
+    <td>{{ r['mas_menos_promedio']|num }}</td>
+    <td>{{ r['valoracion_pir']|num }}</td>
+  </tr>
+  {% endfor %}
+</table>
+</div>
+<p>{{ resultados|length }} resultado(s) (máximo 200 - estrecha los filtros si hay más).</p>
+{% else %}
+<p>No se han encontrado temporadas con esos filtros.</p>
+{% endif %}
+{% endblock %}

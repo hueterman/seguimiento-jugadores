@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Nuevo dato económico</h1>
+<form method="post">
+  <label>Jugador
+    <select name="jugador_id" required>
+      {% for j in jugadores %}
+      <option value="{{ j['id'] }}" {% if jugador_preseleccionado == j['id'] %}selected{% endif %}>{{ j['nombre'] }} {{ j['apellidos'] }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <label>Equipo
+    <select name="equipo_id">
+      <option value="">-- Selecciona --</option>
+      {% for e in equipos %}<option value="{{ e['id'] }}">{{ e['nombre'] }}</option>{% endfor %}
+    </select>
+  </label>
+  <label>Temporada <input name="temporada" placeholder="2024-2025" required></label>
+  <label>Tipo de contrato
+    <select name="tipo_contrato_id">
+      <option value="">-- Selecciona --</option>
+      {% for t in tipos_contrato %}<option value="{{ t['id'] }}">{{ t['nombre'] }}</option>{% endfor %}
+    </select>
+  </label>
+  <label>Salario estimado <input type="number" step="0.01" name="salario_estimado"></label>
+  <label>Moneda <input name="moneda" value="EUR"></label>
+  <label>Fecha inicio contrato <input type="date" name="fecha_inicio_contrato"></label>
+  <label>Fecha fin contrato <input type="date" name="fecha_fin_contrato"></label>
+  <label>Cláusula de rescisión <input type="number" step="0.01" name="clausula_rescision"></label>
+  <label>Agente/representante <input name="agente_representante"></label>
+  <label>Fuente
+    <select name="fuente_id">
+      {% for f in fuentes %}<option value="{{ f['id'] }}">{{ f['nombre'] }}</option>{% endfor %}
+    </select>
+  </label>
+  <label>Fiabilidad
+    <select name="fiabilidad_id">
+      {% for f in fiabilidades %}<option value="{{ f['id'] }}">{{ f['nombre'] }}</option>{% endfor %}
+    </select>
+  </label>
+  <label>URL fuente <input name="url_fuente"></label>
+  <label>Notas <textarea name="notas"></textarea></label>
+  <button type="submit">Guardar</button>
+</form>
+{% endblock %}

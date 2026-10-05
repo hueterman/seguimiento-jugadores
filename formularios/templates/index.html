@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Jugadores</h1>
+
+<form method="get" action="{{ url_for('routes.index') }}">
+  <label>Buscar (nombre, apellidos, nacionalidad o equipo actual)
+    <input type="text" name="q" value="{{ filtros['q'] }}" placeholder="ej. Llull, Francia, Madrid...">
+  </label>
+
+  <label>Posición
+    <select name="posicion_id">
+      <option value="">Todas</option>
+      {% for p in posiciones %}
+      <option value="{{ p['id'] }}" {% if filtros['posicion_id'] == p['id'] %}selected{% endif %}>{{ p['nombre'] }}</option>
+      {% endfor %}
+    </select>
+  </label>
+
+  <label>Estado
+    <select name="estado_id">
+      <option value="">Todos</option>
+      {% for e in estados %}
+      <option value="{{ e['id'] }}" {% if filtros['estado_id'] == e['id'] %}selected{% endif %}>{{ e['nombre'] }}</option>
+      {% endfor %}
+    </select>
+  </label>
+
+  <label>Nacionalidad
+    <select name="nacionalidad">
+      <option value="">Todas</option>
+      {% for n in nacionalidades %}
+      <option value="{{ n }}" {% if filtros['nacionalidad'] == n %}selected{% endif %}>{{ n }}</option>
+      {% endfor %}
+    </select>
+  </label>
+
+  <label>Equipo actual
+    <select name="equipo_id">
+      <option value="">Todos</option>
+      {% for eq in equipos %}
+      <option value="{{ eq['id'] }}" {% if filtros['equipo_id'] == eq['id'] %}selected{% endif %}>{{ eq['nombre'] }} ({{ eq['competicion'] or '-' }})</option>
+      {% endfor %}
+    </select>
+  </label>
+
+  <label>Altura mínima (cm)
+    <input type="number" name="altura_min" value="{{ filtros['altura_min'] or '' }}">
+  </label>
+
+  <label>Altura máxima (cm)
+    <input type="number" name="altura_max" value="{{ filtros['altura_max'] or '' }}">
+  </label>
+
+  <label>Edad mínima
+    <input type="number" name="edad_min" value="{{ filtros['edad_min'] or '' }}">
+  </label>
+
+  <label>Edad máxima
+    <input type="number" name="edad_max" value="{{ filtros['edad_max'] or '' }}">
+  </label>
+
+  <button type="submit">Buscar</button>
+  <a href="{{ url_for('routes.index') }}">Limpiar filtros</a>
+</form>
+
+{% if jugadores %}
+<table>
+  <tr>
+    <th>Nombre</th><th>Posición</th><th>Estado</th><th>Equipo actual</th><th>Nacionalidad</th><th>Altura</th>
+  </tr>
+  {% for j in jugadores %}
+  <tr>
+    <td><a href="{{ url_for('routes.detalle_jugador', jugador_id=j['id']) }}">{{ j["nombre"] }} {{ j["apellidos"] }}</a></td>
+    <td>{{ j["posicion"] or "-" }}</td>
+    <td>{{ j["estado"] or "-" }}</td>
+    <td>{{ j["equipo_actual"] or "-" }}</td>
+    <td>{{ j["nacionalidad"] or "-" }}</td>
+    <td>{{ (j["altura_cm"] ~ " cm") if j["altura_cm"] else "-" }}</td>
+  </tr>
+  {% endfor %}
+</table>
+<p>{{ jugadores|length }} jugador(es) encontrado(s).</p>
+{% else %}
+<p>No se han encontrado jugadores con esos filtros.</p>
+{% endif %}
+{% endblock %}

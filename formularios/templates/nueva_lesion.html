@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Nueva lesión</h1>
+<form method="post">
+  <label>Jugador
+    <select name="jugador_id" required>
+      {% for j in jugadores %}
+      <option value="{{ j['id'] }}" {% if jugador_preseleccionado == j['id'] %}selected{% endif %}>{{ j['nombre'] }} {{ j['apellidos'] }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <label>Fecha de inicio <input type="date" name="fecha_inicio" required></label>
+  <label>Fecha fin estimada <input type="date" name="fecha_fin_estimada"></label>
+  <label>Tipo de lesión <input name="tipo_lesion" placeholder="muscular, ligamentosa..."></label>
+  <label>Zona corporal <input name="zona_corporal" placeholder="rodilla, tobillo..."></label>
+  <label>Gravedad
+    <select name="gravedad_id">
+      <option value="">-- Selecciona --</option>
+      {% for g in gravedades %}<option value="{{ g['id'] }}">{{ g['nombre'] }}</option>{% endfor %}
+    </select>
+  </label>
+  <label>Diagnóstico <textarea name="diagnostico"></textarea></label>
+  <label>Tratamiento <textarea name="tratamiento"></textarea></label>
+  <label>Estado
+    <select name="estado_id">
+      {% for e in estados_lesion %}<option value="{{ e['id'] }}">{{ e['nombre'] }}</option>{% endfor %}
+    </select>
+  </label>
+  <label>Fuente
+    <select name="fuente_id">
+      {% for f in fuentes %}<option value="{{ f['id'] }}">{{ f['nombre'] }}</option>{% endfor %}
+    </select>
+  </label>
+  <label>Fiabilidad
+    <select name="fiabilidad_id">
+      {% for f in fiabilidades %}<option value="{{ f['id'] }}">{{ f['nombre'] }}</option>{% endfor %}
+    </select>
+  </label>
+  <label>URL fuente <input name="url_fuente"></label>
+  <label>Notas <textarea name="notas"></textarea></label>
+  <button type="submit">Guardar</button>
+</form>
+{% endblock %}
